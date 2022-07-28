@@ -35,12 +35,9 @@ class FastAnswer(BaseModel):
     def set_button_color(self):
         self.button_color = get_hex_color()
 
-    def open_form_screen(self,event):
-        try:
-            self = self.query.filter_by(id=self.id).first()
-            FastAnswerFormScreen(fastAnswer=self).mainloop()
-        except Exception as e:
-            print(e)
+    def open_form_screen(self,id):
+        self = self.query.filter_by(id=id).first()
+        FastAnswerFormScreen(fastAnswer=self).mainloop()
 
     def append_button(self,widget:BaseScreen):
         button = Button(
@@ -48,8 +45,8 @@ class FastAnswer(BaseModel):
         bg=self.button_color,fg=self.text_color,font=DEFAULT_FONT,
         width=int(widget.SCREEN_WIDTH*0.75)
         )
-        button.bind('<Button-2>',self.open_form_screen)
-        button.bind('<Button-3>',self.open_form_screen)
+        button.bind('<Button-2>',lambda x:self.open_form_screen(self.id))
+        button.bind('<Button-3>',lambda x:self.open_form_screen(self.id))
         button.pack(padx=widget.SCREEN_WIDTH*0.07,pady=widget.SCREEN_HEIGHT*0.01)
 
     def validate_title(self):

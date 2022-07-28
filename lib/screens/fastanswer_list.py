@@ -27,3 +27,5 @@ class FastAnswerListScreen(BaseScreen):
         )
         button.pack()
  
+    def destroy(self) -> None:
+        return super().withdraw()

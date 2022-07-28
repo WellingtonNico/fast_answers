@@ -21,7 +21,6 @@ class FastAnswerFormScreen(BaseScreen):
         Button(self,text='salvar',font=DEFAULT_FONT,command=self.save).pack()
 
     def save(self):
-
         self.fastAsnwer.save()
         self.destroy()
 

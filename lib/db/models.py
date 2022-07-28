@@ -11,7 +11,7 @@ Base = declarative_base()
 class BaseModel(Base):
     __abstract__ = True
     id = Column('id',Integer,primary_key=True)
-    session = session
+    session = session()
 
     def get_validation_methods(self):
         return [
@@ -23,8 +23,16 @@ class BaseModel(Base):
     class Meta:
         order_by_expression = lambda:BaseModel.id.asc()
     
-    def reopenSession(self):
-        pass
+    @property
+    def get_session(self):
+        try:
+            return self.session
+        except:
+            self.session = session()
+            return self.session
+
+    def close_session(self):
+        self.get_session.close()
 
     def validate(self):
         self.errors = {}
@@ -51,18 +59,21 @@ class BaseModel(Base):
             self.create()
         else:
             self.validate()
-            self.session().commit()
+            self.get_session.commit()
+            self.close_session()
 
     def delete(self):
-        self.session().delete(self)
-        self.session().commit()
+        self.get_session.delete(self)
+        self.get_session.commit()
+        self.close_session()
     
     def create(self,**kwargs):
         obj = self.__class__()
         obj.__dict__.update(**kwargs)
         obj.validate()
-        self.session().add(obj)
-        self.session().commit()
+        self.get_session.add(obj)
+        self.get_session.commit()
+        self.close_session()
         return obj
 
     def get_all(self):
@@ -70,9 +81,11 @@ class BaseModel(Base):
 
     @property
     def get_ordered(self):
-        return self.session().query(self.__class__).order_by(self.Meta.order_by_expression)
+        return self.query.order_by(self.Meta.order_by_expression)
 
     @property
     def query(self) -> Query:
-        return self.session().query(self.__class__)
+        query = self.get_session.query(self.__class__)
+        self.close_session()
+        return query
 
