@@ -36,7 +36,11 @@ class FastAnswer(BaseModel):
         self.button_color = get_hex_color()
 
     def open_form_screen(self,event):
-        FastAnswerFormScreen(fastAnswer=self).mainloop()
+        try:
+            self = self.query.filter_by(id=self.id).first()
+            FastAnswerFormScreen(fastAnswer=self).mainloop()
+        except Exception as e:
+            print(e)
 
     def append_button(self,widget:BaseScreen):
         button = Button(
@@ -50,13 +54,13 @@ class FastAnswer(BaseModel):
 
     def validate_title(self):
         if not self.title:
-            raise ValidationError('O título não pode estar vazio')
+            raise ValidationError('o título não pode estar vazio')
         if len(self.title) > MAX_TITLE_LENGTH:
             raise ValidationError(f'O título não pode ter mais que {MAX_TITLE_LENGTH} caracteres')
     
     def validate_text(self):
         if not self.text:
-            raise ValidationError('O texto não pode estar vazio')
+            raise ValidationError('o texto não pode estar vazio')
         if len(self.text)>MAX_TEXT_LENGTH:
             raise ValidationError(f'O texto não pode ter mais que {MAX_TEXT_LENGTH} caracteres')
 

@@ -15,14 +15,14 @@ class FastAnswerListScreen(BaseScreen):
 
     def build_list(self):
         fastAnswer:FastAnswer
-        for fastAnswer in FastAnswer().query.all():
+        for fastAnswer in FastAnswer().get_ordered.all():
             fastAnswer.append_button(self)
     
     def build_add_button(self):
         button = Button(
             self,text='+ adicionar',
             bg='blue',fg='white',font="Consolas 11 bold",
-            command=lambda:FastAnswerFormScreen().mainloop(),
+            command=lambda:FastAnswerFormScreen(fastAnswerClass=FastAnswer).mainloop(),
             anchor=S
         )
         button.pack()

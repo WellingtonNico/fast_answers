@@ -7,8 +7,8 @@ if __name__ == '__main__':
     # a.text = 'testando alteração'
     # a.save()
     print(len(FastAnswer().query.all()))
+    # FastAnswer().query.delete()
     # for priority in range(5,0,-1):
-
     #     FastAnswer().create(
     #         title=f'teste ok prioridade {priority}',text=f'text [saudacao] {priority}',text_color='#000303',button_color='#42f5f2',priority_number=priority,
     #     )

@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, column
 from sqlalchemy.orm import Query
-
 from lib.db.expecptions import ValidationError
+from lib.screens.exception_detail import ExceptionScreen
 from .session import session
 from sqlalchemy.orm import declarative_base
 
@@ -22,6 +22,9 @@ class BaseModel(Base):
 
     class Meta:
         order_by_expression = lambda:BaseModel.id.asc()
+    
+    def reopenSession(self):
+        pass
 
     def validate(self):
         self.errors = {}
@@ -41,30 +44,35 @@ class BaseModel(Base):
             else:
                 raise AttributeError(column)
         if self.errors.keys():
-            raise ValidationError(self.errors)
+            ExceptionScreen(ValidationError(self.errors),title='Erro de validação')
 
     def save(self):
         if not self.id:
             self.create()
         else:
             self.validate()
-            self.session.commit()
+            self.session().commit()
 
     def delete(self):
-        self.session.delete(self)
-        self.session.commit()
+        self.session().delete(self)
+        self.session().commit()
     
     def create(self,**kwargs):
         obj = self.__class__()
         obj.__dict__.update(**kwargs)
         obj.validate()
-        self.session.add(obj)
-        self.session.commit()
+        self.session().add(obj)
+        self.session().commit()
         return obj
 
     def get_all(self):
         return self.query.all()
 
     @property
+    def get_ordered(self):
+        return self.session().query(self.__class__).order_by(self.Meta.order_by_expression)
+
+    @property
     def query(self) -> Query:
-        return self.session.query(self.__class__).order_by(self.Meta.order_by_expression)
+        return self.session().query(self.__class__)
+
