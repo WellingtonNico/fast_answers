@@ -1,9 +1,6 @@
-from tkinter import Button, Tk
-from lib.constants import DEFAULT_FONT
 from lib.db.models import BaseModel
 from lib.db.expecptions import ValidationError
 from sqlalchemy import Column,Integer,String
-from lib.screens.base import BaseScreen
 from lib.screens.fastanswer_form import FastAnswerFormScreen
 from lib.utils import get_hex_color, get_salutation
 import pyperclip
@@ -22,10 +19,9 @@ class FastAnswer(BaseModel):
     class Meta:
         order_by_expression = lambda:FastAnswer.priority_number.asc()
 
-    def copy(self,screen:Tk):
+    def copy_text(self):
         textToCopy = self.text.replace('[saudacao]',get_salutation())
         pyperclip.copy(textToCopy)
-        screen.withdraw()
 
     def set_text_color(self):
         self.text_color = get_hex_color()
@@ -37,15 +33,15 @@ class FastAnswer(BaseModel):
         self = self.query.filter_by(id=id).first()
         FastAnswerFormScreen(fastAnswer=self).mainloop()
 
-    def append_button(self,widget:BaseScreen):
-        button = Button(
-        widget,text=self.title,command=lambda:self.copy(widget),
-        bg=self.button_color,fg=self.text_color,font=DEFAULT_FONT,
-        width=int(widget.SCREEN_WIDTH*0.75)
-        )
-        button.bind('<Button-2>',lambda x:self.open_form_screen(self.id))
-        button.bind('<Button-3>',lambda x:self.open_form_screen(self.id))
-        button.pack(padx=widget.SCREEN_WIDTH*0.07,pady=widget.SCREEN_HEIGHT*0.01)
+    # def append_button(self,screen:BaseScreen,widget):
+    #     button = Button(
+    #     widget,text=self.title,command=lambda:self.copy(widget),
+    #     bg=self.button_color,fg=self.text_color,font=DEFAULT_FONT,
+    #     width=int(screen.SCREEN_WIDTH*0.75)
+    #     )
+    #     button.bind('<Button-2>',lambda x:self.open_form_screen(self.id))
+    #     button.bind('<Button-3>',lambda x:self.open_form_screen(self.id))
+    #     button.pack(padx=screen.SCREEN_WIDTH*0.07,pady=screen.SCREEN_HEIGHT*0.01)
 
     def validate_title(self):
         if not self.title:
