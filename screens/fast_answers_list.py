@@ -16,8 +16,10 @@ screen.resizable(width=False,height=False)
 
 fastAnswer:FastAnswer
 for fastAnswer in FastAnswer().query.all():
-    Button(
+    button = Button(
         screen,text=fastAnswer.title,command=lambda:fastAnswer.copy(screen),
         bg=fastAnswer.button_color,fg=fastAnswer.text_color,font="Consolas 11 bold",
         width=int(SCREEN_WIDTH*0.75)
-    ).pack()
+    )
+    button.pack(padx=SCREEN_WIDTH*0.07,pady=SCREEN_HEIGHT*0.01)
+    button.bind('<Button-2>',fastAnswer.open_edit_screen)

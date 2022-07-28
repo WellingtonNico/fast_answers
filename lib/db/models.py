@@ -34,6 +34,10 @@ class BaseModel(Base):
                     if not column in self.errors.keys():
                         self.errors[column] = []
                     self.errors[column].append(str(e))
+                except Exception as e:
+                    if not '__all__' in self.errors.keys():
+                        self.errors['__all__'] = []
+                    self.errors['__all__'].append(str(e))
             else:
                 raise AttributeError(column)
         if self.errors.keys():

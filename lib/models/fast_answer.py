@@ -24,6 +24,10 @@ class FastAnswer(BaseModel):
         textToCopy = self.text.replace('[saudacao]',get_salutation())
         pyperclip.copy(textToCopy)
         screen.withdraw()
+        print('texto copiado')
+
+    def open_edit_screen(self,event):
+        print('presionado longo')
 
     def validate_title(self):
         if not self.title:
