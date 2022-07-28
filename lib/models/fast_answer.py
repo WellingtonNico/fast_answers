@@ -16,15 +16,12 @@ class FastAnswer(BaseModel):
     button_color:str = Column('cor do botão',String,nullable=False)
 
     class Meta:
-        order_by = ['id','priority_number']
+        order_by_expression = lambda:FastAnswer.priority_number.asc()
 
-    def paste(self,screen:Tk):
+    def copy(self,screen:Tk):
         textToCopy = self.text.replace('[saudacao]',get_salutation())
         pyperclip.copy(textToCopy)
-        # screen.iconify()
         screen.withdraw()
-        pyperclip.paste()
-
 
     def validate_title(self):
         if not self.title:

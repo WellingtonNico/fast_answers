@@ -14,4 +14,7 @@ screen.resizable(width=False,height=False)
 
 fastAnswer:FastAnswer
 for fastAnswer in FastAnswer().query.all():
-    Button(screen,text=fastAnswer.title,command=lambda:fastAnswer.paste(screen)).pack()
+    Button(
+        screen,text=fastAnswer.title,command=lambda:fastAnswer.copy(screen),
+        bg=fastAnswer.button_color,fg=fastAnswer.text_color,font="Consolas 11 bold",
+    ).pack()

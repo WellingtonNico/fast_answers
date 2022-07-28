@@ -6,12 +6,14 @@ if __name__ == '__main__':
     # a:FastAnswer = FastAnswer().query.first()
     # a.text = 'testando alteração'
     # a.save()
-    # print(len(FastAnswer().query.all()))
-    # FastAnswer().create(
-    #     title='teste ok 2',text='text [saudacao] 2',text_color='#ffffff',button_color='#ffffff',priority_number=3
-    # )text boa noite 2 text boa noite 2text boa noite 2
+    print(len(FastAnswer().query.all()))
+    # for priority in range(5,0,-1):
+
+    #     FastAnswer().create(
+    #         title=f'teste ok prioridade {priority}',text=f'text [saudacao] {priority}',text_color='#000303',button_color='#42f5f2',priority_number=priority,
+    #     )
     
-    # FastAnswer().create(
+    # # FastAnswer().create(
     #     title='teste',text='text',text_color='#ffffff',button_color='#ffffff',priority_number=3
     # )
     
@@ -21,5 +23,5 @@ if __name__ == '__main__':
     
 
     # a.delete()
-    # print(len(FastAnswer().query.all()))
+    print(len(FastAnswer().query.all()))
     listScreen.mainloop()

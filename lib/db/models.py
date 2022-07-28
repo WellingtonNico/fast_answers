@@ -20,6 +20,9 @@ class BaseModel(Base):
             if 'validate_' == attribute[0:9]
         ]
 
+    class Meta:
+        order_by_expression = lambda:BaseModel.id.asc()
+
     def validate(self):
         self.errors = {}
         for validation in self.get_validation_methods():
@@ -57,4 +60,4 @@ class BaseModel(Base):
 
     @property
     def query(self) -> Query:
-        return self.session.query(self.__class__)
+        return self.session.query(self.__class__).order_by(self.Meta.order_by_expression)
