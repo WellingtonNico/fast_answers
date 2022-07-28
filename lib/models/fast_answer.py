@@ -1,9 +1,12 @@
 from copy import copy
-from tkinter import Tk
+from tkinter import Button, Tk
+from lib.constants import DEFAULT_FONT
 from lib.db.models import BaseModel
 from lib.db.expecptions import ValidationError
 from sqlalchemy import Column,Integer,String
-from lib.utils import get_salutation
+from lib.screens.base import BaseScreen
+from lib.screens.fastanswer_form import FastAnswerFormScreen
+from lib.utils import get_hex_color, get_salutation
 import pyperclip
 
 
@@ -26,8 +29,24 @@ class FastAnswer(BaseModel):
         screen.withdraw()
         print('texto copiado')
 
-    def open_edit_screen(self,event):
-        print('presionado longo')
+    def set_text_color(self):
+        self.text_color = get_hex_color()
+    
+    def set_button_color(self):
+        self.button_color = get_hex_color()
+
+    def open_form_screen(self,event):
+        FastAnswerFormScreen(fastAnswer=self).mainloop()
+
+    def append_button(self,widget:BaseScreen):
+        button = Button(
+        widget,text=self.title,command=lambda:self.copy(widget),
+        bg=self.button_color,fg=self.text_color,font=DEFAULT_FONT,
+        width=int(widget.SCREEN_WIDTH*0.75)
+        )
+        button.bind('<Button-2>',self.open_form_screen)
+        button.bind('<Button-3>',self.open_form_screen)
+        button.pack(padx=widget.SCREEN_WIDTH*0.07,pady=widget.SCREEN_HEIGHT*0.01)
 
     def validate_title(self):
         if not self.title:

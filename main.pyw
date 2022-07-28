@@ -1,4 +1,4 @@
-from screens.fast_answers_list import screen as listScreen
+from lib.screens.fastanswer_list import FastAnswerListScreen
 from lib.db.db import create_database
 from lib.models.fast_answer import FastAnswer
 if __name__ == '__main__':
@@ -24,4 +24,5 @@ if __name__ == '__main__':
 
     # a.delete()
     print(len(FastAnswer().query.all()))
-    listScreen.mainloop()
+    FastAnswerListScreen().mainloop()
+    # mainScreen.mainloop()

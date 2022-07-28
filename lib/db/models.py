@@ -44,8 +44,11 @@ class BaseModel(Base):
             raise ValidationError(self.errors)
 
     def save(self):
-        self.validate()
-        self.session.commit()
+        if not self.id:
+            self.create()
+        else:
+            self.validate()
+            self.session.commit()
 
     def delete(self):
         self.session.delete(self)

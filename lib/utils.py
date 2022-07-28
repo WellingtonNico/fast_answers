@@ -1,5 +1,9 @@
 from datetime import datetime
+from tkinter import colorchooser
 
+
+def get_hex_color():
+    return colorchooser.askcolor()[1]
 
 def get_screen_width(screen):
     return screen.winfo_screenwidth()
