@@ -10,6 +10,7 @@ class FastAnswerListScreen(BaseScreen):
         self.title('Respostas Rápidas')
         self.geometry(f'{self.SCREEN_WIDTH}x{self.SCREEN_HEIGHT}+{int(self.MONITOR_WIDTH*0.85/2)}+{int(self.MONITOR_HEIGHT*0.4/2)}')
         self.resizable(width=False,height=False)
+        self.build_update_button()
         self.build_list()
         self.build_add_button()
 
@@ -24,6 +25,15 @@ class FastAnswerListScreen(BaseScreen):
             bg='blue',fg='white',font="Consolas 11 bold",
             command=lambda:FastAnswerFormScreen(fastAnswerClass=FastAnswer).mainloop(),
             anchor=S
+        )
+        button.pack()
+
+    def build_update_button(self):
+        button = Button(
+            self,text='atualizar',
+            bg='blue',fg='white',font="Consolas 11 bold",
+            command=lambda:FastAnswerFormScreen(fastAnswerClass=FastAnswer).mainloop(),
+            anchor=N
         )
         button.pack()
  

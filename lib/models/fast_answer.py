@@ -1,4 +1,3 @@
-from copy import copy
 from tkinter import Button, Tk
 from lib.constants import DEFAULT_FONT
 from lib.db.models import BaseModel
@@ -27,7 +26,6 @@ class FastAnswer(BaseModel):
         textToCopy = self.text.replace('[saudacao]',get_salutation())
         pyperclip.copy(textToCopy)
         screen.withdraw()
-        print('texto copiado')
 
     def set_text_color(self):
         self.text_color = get_hex_color()
