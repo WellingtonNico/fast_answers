@@ -1,9 +1,9 @@
 from lib.db.models import BaseModel
 from lib.db.expecptions import ValidationError
 from sqlalchemy import Column,Integer,String
-from lib.screens.fastanswer_form import FastAnswerFormScreen
 from lib.utils import get_hex_color, get_salutation
 import pyperclip
+from datetime import datetime
 
 
 MAX_TITLE_LENGTH = 30
@@ -19,29 +19,21 @@ class FastAnswer(BaseModel):
     class Meta:
         order_by_expression = lambda:FastAnswer.priority_number.asc()
 
+    def get_updatable_fields(self):
+        return (
+            'title','priority_number','text','text_color','button_color'
+        )
+
     def copy_text(self):
         textToCopy = self.text.replace('[saudacao]',get_salutation())
         pyperclip.copy(textToCopy)
+        print('texto copiado')
 
     def set_text_color(self):
         self.text_color = get_hex_color()
     
     def set_button_color(self):
         self.button_color = get_hex_color()
-
-    def open_form_screen(self,id):
-        self = self.query.filter_by(id=id).first()
-        FastAnswerFormScreen(fastAnswer=self).mainloop()
-
-    # def append_button(self,screen:BaseScreen,widget):
-    #     button = Button(
-    #     widget,text=self.title,command=lambda:self.copy(widget),
-    #     bg=self.button_color,fg=self.text_color,font=DEFAULT_FONT,
-    #     width=int(screen.SCREEN_WIDTH*0.75)
-    #     )
-    #     button.bind('<Button-2>',lambda x:self.open_form_screen(self.id))
-    #     button.bind('<Button-3>',lambda x:self.open_form_screen(self.id))
-    #     button.pack(padx=screen.SCREEN_WIDTH*0.07,pady=screen.SCREEN_HEIGHT*0.01)
 
     def validate_title(self):
         if not self.title:
@@ -71,6 +63,16 @@ class FastAnswer(BaseModel):
         if not self.priority_number:
             raise ValidationError('a prioridade não pode ficar vazia')
 
+    def save(self):
+        if not self.id:
+            self.create()
+        else:
+            self.validate()
+            newData = {}
+            for field in self.get_updatable_fields():
+                newData[field] = getattr(self,field)
+            self.get_session.query(self.__class__).filter(FastAnswer.id=self.id).update(newData)
+            self.close_session()
 
 
 

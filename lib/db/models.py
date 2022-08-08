@@ -1,7 +1,6 @@
 from sqlalchemy import Column, Integer, column
 from sqlalchemy.orm import Query
 from lib.db.expecptions import ValidationError
-from lib.screens.exception_detail import ExceptionScreen
 from .session import session
 from sqlalchemy.orm import declarative_base
 
@@ -12,6 +11,9 @@ class BaseModel(Base):
     __abstract__ = True
     id = Column('id',Integer,primary_key=True)
     session = session()
+
+    def get_updatable_fields(self):
+        return []
 
     def get_validation_methods(self):
         return [
@@ -52,20 +54,13 @@ class BaseModel(Base):
             else:
                 raise AttributeError(column)
         if self.errors.keys():
-            ExceptionScreen(ValidationError(self.errors),title='Erro de validação')
-
-    def save(self):
-        if not self.id:
-            self.create()
-        else:
-            self.validate()
-            self.get_session.commit()
-            self.close_session()
+            raise ValidationError(self.errors)
 
     def delete(self):
-        self.get_session.delete(self)
-        self.get_session.commit()
-        self.close_session()
+        if self.id:
+            self.get_session.delete(self)
+            self.get_session.commit()
+            self.close_session()
     
     def create(self,**kwargs):
         obj = self.__class__()
