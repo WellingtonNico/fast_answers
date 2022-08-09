@@ -1,5 +1,3 @@
-import copy
-from datetime import datetime
 from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import Qt
@@ -7,17 +5,31 @@ from lib.models.fast_answer import FastAnswer
 from lib.screens.qt.base import BaseScreen
 from lib.components.qt.buttons import QDoublePushButton
 from lib.screens.qt.fastanswer_form import FastAnswerFormScreen
+import keyboard
+from PyQt6.QtCore import *
 
+
+class KeyBoardManager(QObject):
+    signal = pyqtSignal()
+
+    def start(self):
+        keyboard.add_hotkey("ctrl+F12", self.signal.emit, suppress=True)
 
 class FastAnswerListScreen(BaseScreen):
+    last_key_pressed = ''
     is_on_editin_mode = False
     editinTriggerButtonText = 'E'
     def __init__(self,*args,**kwargs) -> None:
         super().__init__(*args,**kwargs)
+
+        manager = KeyBoardManager(self)
+        manager.signal.connect(self.show_again)
+        manager.start()
+        self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
         self.FastAnswerModel = FastAnswer()
-        self.setWindowTitle('Respostas Rápidas')
-        self.setFixedHeight(600)
-        self.setFixedWidth(250)
+        self.setWindowTitle('RA')
+        self.setFixedHeight(400)
+        self.setFixedWidth(175)
 
         self.addButton = QPushButton('+ adicionar')
         self.addButton.setStyleSheet(
@@ -58,17 +70,14 @@ class FastAnswerListScreen(BaseScreen):
         self.addButton.clicked.connect(self.click_addButton)
         self.update_list()
 
+    def show_again(self):
+        self.showNormal()
+        self.show()
+
     def click_addButton(self):
         form = FastAnswerFormScreen()
         form.exec()
         self.update_list()
-
-    def fast_answer_clicked(self,fastAnswer:FastAnswer):
-        if (datetime.now()-self.lastClick).seconds < 1:
-            print('abrindo edição')
-        else:
-            fastAnswer.copy_text()
-        self.lastClick = datetime.now()
 
     def open_form_screen(self):
         form = FastAnswerFormScreen(instance=self.sender().fastAnswer)
@@ -77,11 +86,12 @@ class FastAnswerListScreen(BaseScreen):
 
     def copy_text(self):
         self.sender().fastAnswer.copy_text()
+        self.showMinimized()
+        self.hide()
 
     def update_list(self):
         self.mainListWidget.clear()
         fastAnswer:FastAnswer
- 
         for fastAnswer in self.FastAnswerModel.get_all():
             button = QDoublePushButton(
                 fastAnswer.title,
@@ -92,7 +102,7 @@ class FastAnswerListScreen(BaseScreen):
                 '''        
             )
             button.clicked.connect(self.copy_text)
-            button.doubleClicked.connect(self.open_form_screen)
+            button.rightClicked.connect(self.open_form_screen)
             button.fastAnswer = fastAnswer
             item = QListWidgetItem()
             self.mainListWidget.addItem(item)

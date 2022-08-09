@@ -84,3 +84,16 @@ class BaseModel(Base):
         self.close_session()
         return query
 
+    def save(self,**kwargs):
+        if not self.id:
+            self.create(**kwargs)
+        else:
+            self.validate()
+            newData = {}
+            for field in self.get_updatable_fields():
+                newData[field] = getattr(self,field)
+            session = self.get_session
+            session.query(self.__class__).filter(self.__class__.id==self.id).update(newData)
+            session.commit()
+            session.close()
+

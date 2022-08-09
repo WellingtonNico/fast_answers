@@ -4,9 +4,17 @@ from PyQt6.QtWidgets import QApplication
 from lib.models.fast_answer import FastAnswer
 from lib.screens.qt.fastanswer_list import FastAnswerListScreen
 import sys
+import keyboard
 
 
 if __name__ == '__main__':
+    mainScreen:FastAnswerListScreen
+    # def handle_keyboard_event(event):
+    #     if event.event_type == 'down':
+    #         if mainScreen.last_key_pressed == 'ctrl' and event.name == 'f12':
+    #             mainScreen.show()
+    #             mainScreen.showNormal()
+    #         mainScreen.last_key_pressed = event.name
     create_database()
     # a:FastAnswer = FastAnswer().query.first()
     # a.text = 'testando alteração'
@@ -32,6 +40,7 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     mainScreen = FastAnswerListScreen()
     mainScreen.show()
+    # hook = keyboard.on_press(handle_keyboard_event)
     sys.exit(app.exec())
     # FastAnswerListScreen().mainloop()
     # mainScreen.mainloop()

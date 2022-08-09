@@ -21,7 +21,7 @@ class FastAnswer(BaseModel):
 
     def get_updatable_fields(self):
         return (
-            'title','priority_number','text','text_color','button_color'
+            'title','priority_number','text','text_color','button_color','id'
         )
 
     def copy_text(self):
@@ -60,19 +60,9 @@ class FastAnswer(BaseModel):
             raise ValidationError('cor do texto inválida')
 
     def validate_priority_number(self):
-        if not self.priority_number:
+        if not str(self.priority_number):
             raise ValidationError('a prioridade não pode ficar vazia')
 
-    def save(self):
-        if not self.id:
-            self.create()
-        else:
-            self.validate()
-            newData = {}
-            for field in self.get_updatable_fields():
-                newData[field] = getattr(self,field)
-            self.get_session.query(self.__class__).filter(FastAnswer.id=self.id).update(newData)
-            self.close_session()
 
 
 
