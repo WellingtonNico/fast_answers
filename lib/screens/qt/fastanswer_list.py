@@ -6,11 +6,11 @@ from lib.models.fast_answer import FastAnswer
 from lib.screens.qt.base import BaseScreen
 from lib.components.qt.buttons import QDoublePushButton
 from lib.screens.qt.fastanswer_form import FastAnswerFormScreen
-import platform
 import os
 if os.name != 'posix':
     try:
         import keyboard
+        import pyautogui
     except:
         pass
 from PyQt6.QtCore import *
@@ -92,6 +92,12 @@ class FastAnswerListScreen(BaseScreen):
         self.sender().fastAnswer.copy_text()
         self.showMinimized()
         self.hide()
+        if os.name != 'posix':
+            try:
+                pyautogui.typewrite(self.sender().fastAnswer.get_cleaned_text())
+            except Exception as e:
+                print(e)
+                pass
 
     def update_list(self):
         self.mainListWidget.clear()

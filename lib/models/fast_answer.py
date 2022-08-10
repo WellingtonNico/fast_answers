@@ -24,9 +24,11 @@ class FastAnswer(BaseModel):
             'title','priority_number','text','text_color','button_color','id'
         )
 
+    def get_cleaned_text(self):
+        return self.text.replace('[saudacao]',get_salutation())
+
     def copy_text(self):
-        textToCopy = self.text.replace('[saudacao]',get_salutation())
-        pyperclip.copy(textToCopy)
+        pyperclip.copy(self.get_cleaned_text())
         print('texto copiado')
 
     def set_text_color(self):
