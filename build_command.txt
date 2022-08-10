@@ -1,1 +1,1 @@
-pyinstaller --noconfirm --onedir --windowed --icon "Y:/projetos/python/pyqt6/fast_answer/assets/icon.ico" --name "Respostas Rápidas" --add-data "Y:/projetos/python/pyqt6/fast_answer/assets;assets/"  "Y:/projetos/python/pyqt6/fast_answer/main.pyw"
+pyinstaller --noconfirm --onefile --windowed --icon "Y:/projetos/python/pyqt6/fast_answer/assets/icon.ico" --name "Respostas Rápidas" --add-data "Y:/projetos/python/pyqt6/fast_answer/assets;assets/"  "Y:/projetos/python/pyqt6/fast_answer/main.pyw"
