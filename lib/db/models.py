@@ -80,7 +80,7 @@ class BaseModel(Base):
 
     @property
     def query(self) -> Query:
-        query = self.get_session.query(self.__class__)
+        query = self.get_session.query(self.__class__).order_by(self.Meta.order_by_expression)
         self.close_session()
         return query
 
