@@ -15,7 +15,7 @@ class ExceptionScreen(BaseDialog):
         else:
             raise Exception('formato errado dos erros')
         label = QLabel(self.errors)
-        self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
+        self.add_on_top_flag()
         label.setStyleSheet('color:red;font-weight:bold;')
         layout = QVBoxLayout()
         layout.addWidget(label)

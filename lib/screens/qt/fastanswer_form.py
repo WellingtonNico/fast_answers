@@ -2,7 +2,7 @@ from locale import windows_locale
 from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import Qt
-from lib.constants import ASSETS_DIR
+from lib.constants import ASSETS_DIR, ONTOP_FLAG
 from lib.models.fast_answer import FastAnswer
 from lib.screens.qt.base import BaseDialog
 from lib.screens.qt.exception_screen import ExceptionScreen
@@ -17,10 +17,10 @@ class FastAnswerFormScreen(BaseDialog):
             self.instanceId = instance.id
         else:
             self.instance = FastAnswer()
-        self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
+        self.add_on_top_flag()
         self.setWindowTitle('Formulário')
         self.setFixedHeight(400)
-        self.setFixedWidth(300)
+        self.setFixedWidth(450)
 
         self.saveButton = QPushButton('salvar')
         self.saveButton.setStyleSheet(
@@ -39,23 +39,23 @@ class FastAnswerFormScreen(BaseDialog):
         if self.instance.title:
             self.titleInput.setText(self.instance.title)
         self.mainLayout.addWidget(self.titleInput)
-        self.mainLayout.addWidget(QLabel('Prioridade (quanto menor, mais acima ficará):'))
-        self.priorityInput = QSpinBox()
-        if self.instance.priority_number != None:
-            self.priorityInput.setValue(self.instance.priority_number)
-        self.mainLayout.addWidget(self.priorityInput)
 
         gLayout = QGridLayout()
         gLayout.addWidget(QLabel('Cor do botão:'),0,0)
         gLayout.addWidget(QLabel('Cor do texto:'),0,1)
+        gLayout.addWidget(QLabel('Prioridade'),0,2)
         self.buttonColorButton = QPushButton()
         self.buttonColorButton.setStyleSheet(self.build_color_button_style(self.instance.button_color))
         self.buttonColorButton.clicked.connect(self.select_color)
         self.textColorButton = QPushButton()
         self.textColorButton.setStyleSheet(self.build_color_button_style(self.instance.text_color))
         self.textColorButton.clicked.connect(self.select_color)
+        self.priorityInput = QSpinBox()
+        if self.instance.priority_number != None:
+            self.priorityInput.setValue(self.instance.priority_number)
         gLayout.addWidget(self.buttonColorButton,1,0)
         gLayout.addWidget(self.textColorButton,1,1)
+        gLayout.addWidget(self.priorityInput)
         self.mainLayout.addLayout(gLayout)
 
         self.mainLayout.addWidget(QLabel('Texto da resposta rápida:'))
@@ -71,12 +71,21 @@ class FastAnswerFormScreen(BaseDialog):
         self.mainLayout.addLayout(hLayout)
 
     def select_color(self):
-        window = QColorDialog(self)
-        window.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
+        window = QColorDialog()
+        window.setWindowFlags(ONTOP_FLAG)
         window.setWindowIcon(QIcon(f'{ASSETS_DIR}/icon.ico'))
-        window.move(300,0)
-        # window.showNormal()
-        color = window.getColor().name()
+        window.setWindowTitle('Selecione uma cor')
+        if self.sender() == self.textColorButton and self.instance.text_color:
+            color = QColor()
+            color.setNamedColor(self.instance.text_color)
+            window.setCurrentColor(color)
+        elif self.sender() == self.buttonColorButton and self.instance.button_color:
+            color = QColor()
+            color.setNamedColor(self.instance.button_color)
+            window.setCurrentColor(color)
+        window.exec()
+        color = window.currentColor().name()
+        window.close()
         self.sender().setStyleSheet(self.build_color_button_style(color))
         if self.sender() == self.textColorButton:
             self.instance.text_color = color
@@ -99,7 +108,7 @@ class FastAnswerFormScreen(BaseDialog):
                 'button_color':self.instance.button_color,
                 'text_color':self.instance.text_color
             })
-            self.hide()
+            self.close()
         except Exception as e:
             ExceptionScreen(str(e))
 
@@ -108,7 +117,7 @@ class FastAnswerFormScreen(BaseDialog):
             if self.instance.id:
                 try:
                     self.instance.delete()
-                    self.hide()
+                    self.close()
                 except Exception as e:
                     print(f'Erro: {str(e)}')
         except Exception as e:

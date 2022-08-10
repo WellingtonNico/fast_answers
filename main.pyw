@@ -4,7 +4,6 @@ from PyQt6.QtWidgets import QApplication
 from lib.models.fast_answer import FastAnswer
 from lib.screens.qt.fastanswer_list import FastAnswerListScreen
 import sys
-import keyboard
 
 
 if __name__ == '__main__':

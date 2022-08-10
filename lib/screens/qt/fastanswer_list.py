@@ -1,11 +1,18 @@
 from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import Qt
+from lib.constants import ONTOP_FLAG,ONBOTTOM_FLAG
 from lib.models.fast_answer import FastAnswer
 from lib.screens.qt.base import BaseScreen
 from lib.components.qt.buttons import QDoublePushButton
 from lib.screens.qt.fastanswer_form import FastAnswerFormScreen
-import keyboard
+import platform
+import os
+if os.name != 'posix':
+    try:
+        import keyboard
+    except:
+        pass
 from PyQt6.QtCore import *
 
 
@@ -16,20 +23,17 @@ class KeyBoardManager(QObject):
         keyboard.add_hotkey("ctrl+F12", self.signal.emit, suppress=True)
 
 class FastAnswerListScreen(BaseScreen):
-    last_key_pressed = ''
-    is_on_editin_mode = False
-    editinTriggerButtonText = 'E'
     def __init__(self,*args,**kwargs) -> None:
         super().__init__(*args,**kwargs)
-
-        manager = KeyBoardManager(self)
-        manager.signal.connect(self.show_again)
-        manager.start()
-        self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
+        if os.name != 'posix':
+            manager = KeyBoardManager(self)
+            manager.signal.connect(self.show_again)
+            manager.start()
+        self.add_on_top_flag()
         self.FastAnswerModel = FastAnswer()
         self.setWindowTitle('RA')
-        self.setFixedHeight(400)
-        self.setFixedWidth(175)
+        self.setFixedHeight(500)
+        self.setFixedWidth(190)
 
         self.addButton = QPushButton('+ adicionar')
         self.addButton.setStyleSheet(
